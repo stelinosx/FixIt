@@ -1,5 +1,9 @@
 Η αρχική προσέγγιση της βάσης δεδομένων που θα χρησιμοποιηθεί για την εφαρμογή μας:
 
+drop database if exists fixitdb;
+create database fixitdb;
+use fixitdb;
+
 create table users(
 user_id int(11) not null auto_increment,
 user_username varchar(255) unique not null,
