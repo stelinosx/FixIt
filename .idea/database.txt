@@ -1,4 +1,5 @@
-Η αρχικη μας σκέψη για την βάση δεδομένων που θα χρησιμοποιήσουμε
+Η αρχική προσέγγιση της βάσης δεδομένων που θα χρησιμοποιηθεί για την εφαρμογή μας:
+
 create table users(
 user_id int(11) not null auto_increment,
 user_username varchar(255) unique not null,
