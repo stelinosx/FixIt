@@ -1,9 +1,11 @@
 import javax.swing.*;
+
 import java.awt.*;
 import java.awt.event.*;
 import java.sql.*;
 
-public class LoginFrame extends JFrame {
+
+public class loginframe extends JFrame {
     private JPanel mainPanel;
     private JTabbedPane tabbedPane;
     private JPanel loginPanel;
@@ -19,6 +21,7 @@ public class LoginFrame extends JFrame {
     private JTextField loginUsernameField;
     private JPasswordField loginPasswordField;
     private JButton loginButton;
+    private JLabel loginErrorLabel;
     
     // Register components
     private JTextField regUsernameField;
@@ -27,19 +30,19 @@ public class LoginFrame extends JFrame {
     private JTextField regPhoneField;
     private JComboBox<String> userTypeCombo;
     private JButton registerButton;
+    private JLabel registrationErrorLabel;
 
     // Database connection
     private Connection connection;
-
-    public LoginFrame() {
+    public loginframe() {
         try {
             // Initialize database connection
             Class.forName("com.mysql.cj.jdbc.Driver");
             System.out.println("MySQL JDBC driver loaded successfully");
             
-            String url = "jdbc:mysql://localhost:3306/fixitdb";
+            String url = "jdbc:mysql://localhost:3306/fixit";
             String username = "root";
-            String password = "NikolasMicro21!";
+            String password = "thanost04";
             
             connection = DriverManager.getConnection(url, username, password);
             System.out.println("Database connection established successfully");
@@ -58,7 +61,7 @@ public class LoginFrame extends JFrame {
         } catch (SQLException e) {
             System.out.println("Database connection error: " + e.getMessage());
             JOptionPane.showMessageDialog(null, "Σφάλμα σύνδεσης με τη βάση δεδομένων: " + e.getMessage() + 
-                "\nΕλέγξτε αν:\n1. Ο MySQL server είναι ενεργός\n2. Η βάση fixit_db υπάρχει\n3. Το username και password είναι σωστά");
+                "\nΕλέγξτε αν:\n1. Ο MySQL server είναι ενεργός\n2. Η βάση fixi υπάρχει\n3. Το username και password είναι σωστά");
             System.exit(1);
         }
 
@@ -75,19 +78,22 @@ public class LoginFrame extends JFrame {
             @Override
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
-                setBackground(ORANGE_PRIMARY);
+                setBackground(Color.WHITE);
             }
         };
         headerPanel.setPreferredSize(new Dimension(500, 200));
-        
-        JLabel titleLabel = new JLabel("FIXIT");
-        titleLabel.setFont(new Font("Arial", Font.BOLD, 48));
-        titleLabel.setForeground(Color.WHITE);
-        titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        headerPanel.add(titleLabel, BorderLayout.CENTER);
-        
+
+        ImageIcon logoIcon = new ImageIcon("src\\images\\FixIt.png");
+
+        Image scaledImage = logoIcon.getImage().getScaledInstance(280, 80, Image.SCALE_SMOOTH);
+        ImageIcon resizedIcon = new ImageIcon(scaledImage);
+        JLabel logoLabel = new JLabel(resizedIcon);
+        logoLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        headerPanel.add(logoLabel, BorderLayout.CENTER);
+    
         mainPanel.add(headerPanel, BorderLayout.NORTH);
         
+    
         // Create tabbed pane
         tabbedPane = new JTabbedPane();
         tabbedPane.setBackground(BACKGROUND);
@@ -114,7 +120,7 @@ public class LoginFrame extends JFrame {
         // Username
         gbc.gridx = 0;
         gbc.gridy = 0;
-        JLabel usernameLabel = new JLabel("Username:");
+        JLabel usernameLabel = new JLabel("Username:"); 
         usernameLabel.setFont(new Font("Arial", Font.BOLD, 14));
         panel.add(usernameLabel, gbc);
         
@@ -136,7 +142,7 @@ public class LoginFrame extends JFrame {
         loginPasswordField.setFont(new Font("Arial", Font.PLAIN, 14));
         loginPasswordField.setBorder(BorderFactory.createLineBorder(ORANGE_LIGHT));
         panel.add(loginPasswordField, gbc);
-        
+    
         // Login button
         gbc.gridx = 0;
         gbc.gridy = 2;
@@ -145,7 +151,13 @@ public class LoginFrame extends JFrame {
         styleButton(loginButton);
         loginButton.addActionListener(e -> handleLogin());
         panel.add(loginButton, gbc);
-        
+
+        gbc.gridy = 3;
+        loginErrorLabel = new JLabel(" ", SwingConstants.CENTER);
+        loginErrorLabel.setForeground(Color.RED);
+        loginErrorLabel.setFont(new Font("SansSerif", Font.BOLD, 14));
+        panel.add(loginErrorLabel, gbc);
+    
         return panel;
     }
     
@@ -153,95 +165,105 @@ public class LoginFrame extends JFrame {
         JPanel panel = new JPanel(new GridBagLayout());
         panel.setBackground(BACKGROUND);
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(15, 15, 15, 15);
+        gbc.insets = new Insets(10, 10, 10, 10);
+        gbc.anchor = GridBagConstraints.WEST;
         
+        Font labelFont = new Font("Arial", Font.BOLD, 14);
+        Font fieldFont = new Font("Arial", Font.PLAIN, 14);
+        javax.swing.border.Border orangeBorder = BorderFactory.createLineBorder(ORANGE_LIGHT);
+    
         // Username
         gbc.gridx = 0;
         gbc.gridy = 0;
         JLabel usernameLabel = new JLabel("Username:");
-        usernameLabel.setFont(new Font("Arial", Font.BOLD, 14));
+        usernameLabel.setFont(labelFont);
         panel.add(usernameLabel, gbc);
-        
+    
         gbc.gridx = 1;
         regUsernameField = new JTextField(20);
-        regUsernameField.setFont(new Font("Arial", Font.PLAIN, 14));
-        regUsernameField.setBorder(BorderFactory.createLineBorder(ORANGE_LIGHT));
+        regUsernameField.setFont(fieldFont);
+        regUsernameField.setBorder(orangeBorder);
         panel.add(regUsernameField, gbc);
-        
+    
         // Password
         gbc.gridx = 0;
-        gbc.gridy = 1;
+        gbc.gridy++;
         JLabel passwordLabel = new JLabel("Password:");
-        passwordLabel.setFont(new Font("Arial", Font.BOLD, 14));
+        passwordLabel.setFont(labelFont);
         panel.add(passwordLabel, gbc);
-        
+    
         gbc.gridx = 1;
         regPasswordField = new JPasswordField(20);
-        regPasswordField.setFont(new Font("Arial", Font.PLAIN, 14));
-        regPasswordField.setBorder(BorderFactory.createLineBorder(ORANGE_LIGHT));
+        regPasswordField.setFont(fieldFont);
+        regPasswordField.setBorder(orangeBorder);
         panel.add(regPasswordField, gbc);
-        
+    
         // Email
         gbc.gridx = 0;
-        gbc.gridy = 2;
+        gbc.gridy++;
         JLabel emailLabel = new JLabel("Email:");
-        emailLabel.setFont(new Font("Arial", Font.BOLD, 14));
+        emailLabel.setFont(labelFont);
         panel.add(emailLabel, gbc);
-        
+    
         gbc.gridx = 1;
         regEmailField = new JTextField(20);
-        regEmailField.setFont(new Font("Arial", Font.PLAIN, 14));
-        regEmailField.setBorder(BorderFactory.createLineBorder(ORANGE_LIGHT));
+        regEmailField.setFont(fieldFont);
+        regEmailField.setBorder(orangeBorder);
         panel.add(regEmailField, gbc);
-        
+    
         // Phone
         gbc.gridx = 0;
-        gbc.gridy = 3;
+        gbc.gridy++;
         JLabel phoneLabel = new JLabel("Phone:");
-        phoneLabel.setFont(new Font("Arial", Font.BOLD, 14));
+        phoneLabel.setFont(labelFont);
         panel.add(phoneLabel, gbc);
-        
+    
         gbc.gridx = 1;
         regPhoneField = new JTextField(20);
-        regPhoneField.setFont(new Font("Arial", Font.PLAIN, 14));
-        regPhoneField.setBorder(BorderFactory.createLineBorder(ORANGE_LIGHT));
+        regPhoneField.setFont(fieldFont);
+        regPhoneField.setBorder(orangeBorder);
         panel.add(regPhoneField, gbc);
-        
+    
         // User Type
         gbc.gridx = 0;
-        gbc.gridy = 4;
+        gbc.gridy++;
         JLabel userTypeLabel = new JLabel("User Type:");
-        userTypeLabel.setFont(new Font("Arial", Font.BOLD, 14));
+        userTypeLabel.setFont(labelFont);
         panel.add(userTypeLabel, gbc);
-        
+    
         gbc.gridx = 1;
-        String[] userTypes = {"Customer", "Professional"};
-        userTypeCombo = new JComboBox<>(userTypes);
-        userTypeCombo.setFont(new Font("Arial", Font.PLAIN, 14));
-        userTypeCombo.setBackground(Color.WHITE);
-        userTypeCombo.setBorder(BorderFactory.createLineBorder(ORANGE_LIGHT));
+        userTypeCombo = new JComboBox<>(new String[] {"Customer", "Professional"});
+        userTypeCombo.setFont(fieldFont);
+        userTypeCombo.setBorder(orangeBorder);
         panel.add(userTypeCombo, gbc);
-        
+    
         // Register button
         gbc.gridx = 0;
-        gbc.gridy = 5;
+        gbc.gridy++;
         gbc.gridwidth = 2;
+        gbc.anchor = GridBagConstraints.CENTER;
         registerButton = new JButton("Register");
         styleButton(registerButton);
         registerButton.addActionListener(e -> handleRegistration());
         panel.add(registerButton, gbc);
-        
+    
+        // Error label κάτω από το κουμπί
+        gbc.gridy++;
+        registrationErrorLabel = new JLabel(" ", SwingConstants.CENTER);
+        registrationErrorLabel.setForeground(Color.RED);
+        registrationErrorLabel.setFont(new Font("SansSerif", Font.BOLD, 14));
+        panel.add(registrationErrorLabel, gbc);
+    
         return panel;
     }
-    
+        
     private void styleButton(JButton button) {
-        button.setBackground(ORANGE_PRIMARY);
-        button.setForeground(Color.WHITE);
-        button.setFont(new Font("Arial", Font.BOLD, 14));
-        button.setFocusPainted(false);
-        button.setBorderPainted(false);
-        button.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        button.setPreferredSize(new Dimension(200, 40));
+        button.setBackground(ORANGE_PRIMARY);        
+        button.setFocusPainted(false);               
+        button.setFont(new Font("Arial", Font.BOLD, 14)); 
+        button.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20)); 
+        button.setCursor(new Cursor(Cursor.HAND_CURSOR)); 
+    
         
         // Add hover effect
         button.addMouseListener(new MouseAdapter() {
@@ -258,182 +280,197 @@ public class LoginFrame extends JFrame {
     }
 
     private void handleLogin() {
-        String username = loginUsernameField.getText();
-        String password = new String(loginPasswordField.getPassword());
-        
+        String username = loginUsernameField.getText().trim();
+        String password = new String(loginPasswordField.getPassword()).trim();
+    
         if (username.isEmpty() || password.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Please fill in all fields", "Error", JOptionPane.ERROR_MESSAGE);
+            loginErrorLabel.setText("Please fill in all fields");
             return;
         }
-        
+    
+        loginErrorLabel.setText("");
+    
         try {
             String query = "SELECT user_id, user_type FROM users WHERE user_username = ? AND user_password = ?";
             PreparedStatement stmt = connection.prepareStatement(query);
             stmt.setString(1, username);
             stmt.setString(2, password);
             ResultSet rs = stmt.executeQuery();
-            
+    
             if (rs.next()) {
                 int userId = rs.getInt("user_id");
                 String userType = rs.getString("user_type");
-                JOptionPane.showMessageDialog(this, "Login successful!", "Success", JOptionPane.INFORMATION_MESSAGE);
                 
-                // Close this frame
+                System.out.println("Login successful: user_id = " + userId + ", user_type = " + userType);
+    
+                CustomDialog dialog = new CustomDialog(this, "Login successful!");
+                dialog.setVisible(true);
                 this.dispose();
-                
-                // Open appropriate frame based on user type
+    
                 if (userType.equals("customer")) {
-                    // Get customer_id from customers table
                     query = "SELECT customer_id FROM customers WHERE user_id = ?";
                     stmt = connection.prepareStatement(query);
                     stmt.setInt(1, userId);
                     rs = stmt.executeQuery();
-                    
+    
                     if (rs.next()) {
                         int customerId = rs.getInt("customer_id");
+                        System.out.println("Customer found: customer_id = " + customerId);
                         SwingUtilities.invokeLater(() -> {
-                            new CustomerFrame(customerId).setVisible(true);
+                            new customerframe(customerId).setVisible(true);
                         });
                     } else {
+                        System.out.println("Customer record not found for user_id: " + userId);
                         JOptionPane.showMessageDialog(this, "Customer record not found", "Error", JOptionPane.ERROR_MESSAGE);
-                        new LoginFrame().setVisible(true);
+                        new loginframe().setVisible(true);
                     }
                 } else if (userType.equals("professional")) {
-                    // Get professional_id from professionals table
                     query = "SELECT professional_id FROM professionals WHERE user_id = ?";
                     stmt = connection.prepareStatement(query);
                     stmt.setInt(1, userId);
                     rs = stmt.executeQuery();
-                    
+    
                     if (rs.next()) {
                         int professionalId = rs.getInt("professional_id");
+                        System.out.println("Professional found: professional_id = " + professionalId);
                         SwingUtilities.invokeLater(() -> {
-                            new ProfessionalFrame(professionalId).setVisible(true);
+                            new professionalframe(professionalId, connection).setVisible(true);
                         });
                     } else {
+                        System.out.println("Professional record not found for user_id: " + userId);
                         JOptionPane.showMessageDialog(this, "Professional record not found", "Error", JOptionPane.ERROR_MESSAGE);
-                        new LoginFrame().setVisible(true);
+                        new loginframe().setVisible(true);
                     }
                 }
             } else {
-                JOptionPane.showMessageDialog(this, "Invalid username or password", "Error", JOptionPane.ERROR_MESSAGE);
+                System.out.println("Login failed: wrong username or password");
+                loginErrorLabel.setText("Wrong username or password");
             }
+    
         } catch (SQLException e) {
-            JOptionPane.showMessageDialog(this, "Database error: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
+            loginErrorLabel.setText("Database error: " + e.getMessage());
         }
     }
-
+    
     private void handleRegistration() {
-        String username = regUsernameField.getText();
-        String password = new String(regPasswordField.getPassword());
-        String email = regEmailField.getText();
-        String phone = regPhoneField.getText();
+        String username = regUsernameField.getText().trim();
+        String password = new String(regPasswordField.getPassword()).trim();
+        String email = regEmailField.getText().trim();
+        String phone = regPhoneField.getText().trim();
         String userType = (String) userTypeCombo.getSelectedItem();
     
-        if (userType.equals("Customer")) {
-            userType = "customer";
-        } else if (userType.equals("Professional")) {
-            userType = "professional";
-        }
-    
+        // Έλεγχος αν κάποιο πεδίο είναι κενό
         if (username.isEmpty() || password.isEmpty() || email.isEmpty() || phone.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Please fill in all fields", "Error", JOptionPane.ERROR_MESSAGE);
+            registrationErrorLabel.setForeground(Color.RED);
+            registrationErrorLabel.setText("Please fill in all the fields");
             return;
         }
     
-        
         try {
-            // Print debug info
-            System.out.println("Attempting to register new user:");
-            System.out.println("Username: " + username);
-            System.out.println("Email: " + email);
-            System.out.println("Phone: " + phone);
-            System.out.println("User Type: " + userType);
-            
-            // Begin transaction
-            connection.setAutoCommit(false);
-            
-            // Insert user
-            String query = "INSERT INTO users (user_username, user_password, user_email, user_type) VALUES (?, ?, ?, ?)";
-            PreparedStatement stmt = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
-            stmt.setString(1, username);
-            stmt.setString(2, password);
-            stmt.setString(3, email);
-            stmt.setString(4, userType);
-            
-            System.out.println("Executing user insert query: " + query);
-            int userRowsAffected = stmt.executeUpdate();
-            System.out.println("User insert affected " + userRowsAffected + " rows");
-            
-            // Get the generated user_id
-            ResultSet rs = stmt.getGeneratedKeys();
-            if (rs.next()) {
-                int userId = rs.getInt(1);
-                System.out.println("Generated user_id: " + userId);
-                
-                // Insert into appropriate table based on user_type
-                if (userType.equals("customer")) {
-                    query = "INSERT INTO customers (customer_FirstName, customer_LastName, address, customer_phone, customer_bonuspoints, user_id) VALUES (?, ?, ?, ?, ?, ?)";
-                    stmt = connection.prepareStatement(query);
-                    stmt.setString(1, "Default"); // Default values, can be updated later
-                    stmt.setString(2, "User");
-                    stmt.setString(3, "Default Address");
-                    stmt.setString(4, phone);
-                    stmt.setInt(5, 0);
-                    stmt.setInt(6, userId);
-                    
-                    System.out.println("Executing customer insert query");
-                    int customerRowsAffected = stmt.executeUpdate();
-                    System.out.println("Customer insert affected " + customerRowsAffected + " rows");
-                } else {
-                    query = "INSERT INTO professionals (professional_FirstName, professional_LastName, professional_phone, professional_bio, user_id) VALUES (?, ?, ?, ?, ?)";
-                    stmt = connection.prepareStatement(query);
-                    stmt.setString(1, "Default"); // Default values, can be updated later
-                    stmt.setString(2, "Professional");
-                    stmt.setString(3, phone);
-                    stmt.setString(4, "Default bio"); // Adding default value for professional_bio
-                    stmt.setInt(5, userId);
-                    
-                    System.out.println("Executing professional insert query");
-                    int professionalRowsAffected = stmt.executeUpdate();
-                    System.out.println("Professional insert affected " + professionalRowsAffected + " rows");
+            // Έλεγχος αν υπάρχει ήδη το username
+            String checkUsernameQuery = "SELECT COUNT(*) FROM users WHERE user_username = ?";
+            try (PreparedStatement checkUsernameStmt = connection.prepareStatement(checkUsernameQuery)) {
+                checkUsernameStmt.setString(1, username);
+                try (ResultSet checkUsernameRs = checkUsernameStmt.executeQuery()) {
+                    if (checkUsernameRs.next() && checkUsernameRs.getInt(1) > 0) {
+                        registrationErrorLabel.setForeground(Color.RED);
+                        registrationErrorLabel.setText("Username already exists.");
+                        return;
+                    }
                 }
-                
-                // Commit transaction
-                System.out.println("Committing transaction");
-                connection.commit();
-                
-                JOptionPane.showMessageDialog(this, "Registration successful!\nUser ID: " + userId, "Success", JOptionPane.INFORMATION_MESSAGE);
-                tabbedPane.setSelectedIndex(0); // Switch to login tab
-                
-                // Clear fields
-                regUsernameField.setText("");
-                regPasswordField.setText("");
-                regEmailField.setText("");
-                regPhoneField.setText("");
             }
+    
+            // Έλεγχος αν υπάρχει ήδη το email
+            String checkEmailQuery = "SELECT COUNT(*) FROM users WHERE user_email = ?";
+            try (PreparedStatement checkEmailStmt = connection.prepareStatement(checkEmailQuery)) {
+                checkEmailStmt.setString(1, email);
+                try (ResultSet checkEmailRs = checkEmailStmt.executeQuery()) {
+                    if (checkEmailRs.next() && checkEmailRs.getInt(1) > 0) {
+                        registrationErrorLabel.setForeground(Color.RED);
+                        registrationErrorLabel.setText("Email already exists.");
+                        return;
+                    }
+                }
+            }
+    
+            // Όλα καλά -> καθαρισμός μηνύματος λάθους
+            registrationErrorLabel.setText("");
+    
+            // Εισαγωγή νέου χρήστη
+            connection.setAutoCommit(false); // Ξεκινάμε transaction
+    
+            String insertUserQuery = "INSERT INTO users (user_username, user_password, user_email, user_type) VALUES (?, ?, ?, ?)";
+            try (PreparedStatement insertUserStmt = connection.prepareStatement(insertUserQuery, Statement.RETURN_GENERATED_KEYS)) {
+                insertUserStmt.setString(1, username);
+                insertUserStmt.setString(2, password);
+                insertUserStmt.setString(3, email);
+                insertUserStmt.setString(4, userType);
+                insertUserStmt.executeUpdate();
+    
+                // Παίρνουμε το παραγόμενο user_id
+                try (ResultSet generatedKeys = insertUserStmt.getGeneratedKeys()) {
+                    if (generatedKeys.next()) {
+                        int userId = generatedKeys.getInt(1);
+    
+                        if (userType.equalsIgnoreCase("customer")) {
+                            String insertCustomerQuery = "INSERT INTO customers (customer_FirstName, customer_LastName, address, customer_phone, customer_bonuspoints, user_id) VALUES (?, ?, ?, ?, ?, ?)";
+                            try (PreparedStatement insertCustomerStmt = connection.prepareStatement(insertCustomerQuery)) {
+                                insertCustomerStmt.setString(1, ""); // Default FirstName
+                                insertCustomerStmt.setString(2, ""); // Default LastName
+                                insertCustomerStmt.setString(3, ""); // Default address
+                                insertCustomerStmt.setString(4, phone);
+                                insertCustomerStmt.setInt(5, 0); // bonus points = 0
+                                insertCustomerStmt.setInt(6, userId);
+                                insertCustomerStmt.executeUpdate();
+                            }
+                        } else if (userType.equalsIgnoreCase("professional")) {
+                            String insertProfessionalQuery = "INSERT INTO professionals (professional_FirstName, professional_LastName, professional_phone, professional_bio, user_id) VALUES (?, ?, ?, ?, ?)";
+                            try (PreparedStatement insertProfessionalStmt = connection.prepareStatement(insertProfessionalQuery)) {
+                                insertProfessionalStmt.setString(1, ""); // Default FirstName
+                                insertProfessionalStmt.setString(2, ""); // Default LastName
+                                insertProfessionalStmt.setString(3, phone);
+                                insertProfessionalStmt.setString(4, ""); // Default bio
+                                insertProfessionalStmt.setInt(5, userId);
+                                insertProfessionalStmt.executeUpdate();
+                            }
+                        }
+                    } else {
+                        throw new SQLException("User ID not generated.");
+                    }
+                }
+            }
+    
+            connection.commit(); // Επιτυχής καταχώρηση
+            registrationErrorLabel.setForeground(new Color(0, 128, 0)); // Πράσινο χρώμα
+            registrationErrorLabel.setText("Registration successful!");
+    
+            // Καθαρισμός πεδίων
+            regUsernameField.setText("");
+            regPasswordField.setText("");
+            regEmailField.setText("");
+            regPhoneField.setText("");
+    
+            // Επιστροφή στην καρτέλα login
+            tabbedPane.setSelectedIndex(0);
+    
         } catch (SQLException e) {
             try {
-                System.out.println("Error during registration: " + e.getMessage());
-                e.printStackTrace();
-                connection.rollback();
-                System.out.println("Transaction rolled back");
+                connection.rollback(); // Αν κάτι πάει στραβά κάνουμε rollback
             } catch (SQLException ex) {
-                // Ignore
-                System.out.println("Error during rollback: " + ex.getMessage());
+                ex.printStackTrace();
             }
-            JOptionPane.showMessageDialog(this, "Registration error: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            registrationErrorLabel.setForeground(Color.RED);
+            registrationErrorLabel.setText("Registration error: " + e.getMessage());
         } finally {
             try {
-                connection.setAutoCommit(true);
-                System.out.println("Auto-commit restored to true");
+                connection.setAutoCommit(true); // Ξαναενεργοποιούμε το autocommit
             } catch (SQLException e) {
-                // Ignore
-                System.out.println("Error restoring auto-commit: " + e.getMessage());
+                e.printStackTrace();
             }
         }
     }
-
+    
     public static void main(String[] args) {
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -442,9 +479,8 @@ public class LoginFrame extends JFrame {
         }
         
         SwingUtilities.invokeLater(() -> {
-            LoginFrame frame = new LoginFrame();
+            loginframe frame = new loginframe();
             frame.setVisible(true);
         });
     }
 } 
-
