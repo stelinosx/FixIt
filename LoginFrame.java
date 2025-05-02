@@ -5,7 +5,7 @@ import java.awt.event.*;
 import java.sql.*;
 
 
-public class loginframe extends JFrame {
+public class LoginFrame extends JFrame {
     private JPanel mainPanel;
     private JTabbedPane tabbedPane;
     private JPanel loginPanel;
@@ -34,7 +34,7 @@ public class loginframe extends JFrame {
 
     // Database connection
     private Connection connection;
-    public loginframe() {
+    public LoginFrame() {
         try {
             // Initialize database connection
             Class.forName("com.mysql.cj.jdbc.Driver");
@@ -317,12 +317,12 @@ public class loginframe extends JFrame {
                         int customerId = rs.getInt("customer_id");
                         System.out.println("Customer found: customer_id = " + customerId);
                         SwingUtilities.invokeLater(() -> {
-                            new customerframe(customerId).setVisible(true);
+                            new CustomerFrame(customerId).setVisible(true);
                         });
                     } else {
                         System.out.println("Customer record not found for user_id: " + userId);
                         JOptionPane.showMessageDialog(this, "Customer record not found", "Error", JOptionPane.ERROR_MESSAGE);
-                        new loginframe().setVisible(true);
+                        new LoginFrame().setVisible(true);
                     }
                 } else if (userType.equals("professional")) {
                     query = "SELECT professional_id FROM professionals WHERE user_id = ?";
@@ -334,12 +334,12 @@ public class loginframe extends JFrame {
                         int professionalId = rs.getInt("professional_id");
                         System.out.println("Professional found: professional_id = " + professionalId);
                         SwingUtilities.invokeLater(() -> {
-                            new professionalframe(professionalId, connection).setVisible(true);
+                            new ProfessionalFrame(professionalId, connection).setVisible(true);
                         });
                     } else {
                         System.out.println("Professional record not found for user_id: " + userId);
                         JOptionPane.showMessageDialog(this, "Professional record not found", "Error", JOptionPane.ERROR_MESSAGE);
-                        new loginframe().setVisible(true);
+                        new LoginFrame().setVisible(true);
                     }
                 }
             } else {
@@ -479,7 +479,7 @@ public class loginframe extends JFrame {
         }
         
         SwingUtilities.invokeLater(() -> {
-            loginframe frame = new loginframe();
+            LoginFrame frame = new LoginFrame();
             frame.setVisible(true);
         });
     }
