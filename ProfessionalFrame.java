@@ -3,7 +3,6 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-
 import javax.swing.*;
 
 public class ProfessionalFrame extends JFrame {
@@ -39,9 +38,8 @@ public class ProfessionalFrame extends JFrame {
 
         // Panels
         createHomePanel();
-        appointmentsPanel = new ProfessionalAppointments();
         profilePanel = new ProfessionalProfile(connection, professionalId).createProfilePanel();
-        supportPanel = new supportpanel();
+        
 
         contentPanel.add(homePanel, "home");
         contentPanel.add(appointmentsPanel, "appointments");
