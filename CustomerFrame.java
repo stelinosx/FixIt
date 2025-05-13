@@ -133,7 +133,7 @@ public class CustomerFrame extends JFrame {
         // Other panels as separate classes
        
         contentPanel.add(new CustomerSearch(connection, this, customerId), "search");
-       
+        contentPanel.add(new CustomerPoints(connection, this, customerId), "points");
 
         switchTo("home");
     }
