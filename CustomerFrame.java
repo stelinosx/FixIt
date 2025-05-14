@@ -8,6 +8,7 @@ public class CustomerFrame extends JFrame {
     private JPanel sidebarPanel;
     private JPanel contentPanel;
     private CardLayout cardLayout;
+    private CustomerPoints pointsPanel;
 
     // Panels
     private JPanel homePanel;
@@ -23,8 +24,6 @@ public class CustomerFrame extends JFrame {
     public static final Color BACKGROUND     = new Color(255, 250, 240);
     public static final Color SIDEBAR_BG     = new Color(250, 250, 250);
 
-  
-
     public CustomerFrame(int customerId) {
         this.customerId = customerId;
         initConnection();
@@ -37,7 +36,7 @@ public class CustomerFrame extends JFrame {
     private void initConnection() {
         try {
             connection = DriverManager.getConnection(
-                "jdbc:mysql://localhost:3306/FixIt", "root", "2004Stelios2004"
+                "jdbc:mysql://localhost:3306/fixitdb", "root", "NikolasMicro21!"
             );
             System.out.println("Database connected");
         } catch (SQLException e) {
@@ -70,6 +69,10 @@ public class CustomerFrame extends JFrame {
         contentPanel.setBackground(BACKGROUND);
         add(contentPanel, BorderLayout.CENTER);
     }
+
+    public JPanel getContentPanel() {
+    return contentPanel;
+}
 
     private void initSidebar() {
         // Logo
@@ -126,14 +129,26 @@ public class CustomerFrame extends JFrame {
         cardLayout.show(contentPanel, key);
     }
 
+    /**
+     * Convenience to return to home screen
+     */
+    public void showHome() {
+        switchTo("home");
+    }
+
     private void initContentPanels() {
         // Home panel inline
         createHomePanel();
         contentPanel.add(homePanel, "home");
         // Other panels as separate classes
-       
         contentPanel.add(new CustomerSearch(connection, this, customerId), "search");
-        contentPanel.add(new CustomerPoints(connection, this, customerId), "points");
+        contentPanel.add(new CustomerAppointment(connection, this, customerId), "appointments");
+        contentPanel.add(new CustomerReview(connection, customerId), "reviews");
+        contentPanel.add(new CustomerProfile(connection, this, customerId), "profile");
+        contentPanel.add(new CustomerSupport(connection, this, customerId), "support");
+        pointsPanel = new CustomerPoints(connection, this, customerId);
+        contentPanel.add(pointsPanel, "points");
+        
 
         switchTo("home");
     }
@@ -146,31 +161,9 @@ public class CustomerFrame extends JFrame {
         JPanel headerPanel = new JPanel(new BorderLayout());
         headerPanel.setBackground(BACKGROUND);
         headerPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
-        
         JLabel titleLabel = new JLabel("Δημοφιλείς υπηρεσίες");
         titleLabel.setFont(new Font("Arial", Font.BOLD, 24));
         headerPanel.add(titleLabel, BorderLayout.WEST);
-        
-        // Search bar
-        JPanel searchBarPanel = new JPanel(new BorderLayout());
-        searchBarPanel.setBackground(BACKGROUND);
-        
-        JTextField searchField = new JTextField();
-        searchField.setPreferredSize(new Dimension(400, 40));
-        searchField.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(Color.LIGHT_GRAY, 1, true),
-                BorderFactory.createEmptyBorder(5, 10, 5, 10)));
-        searchField.setText("Αναζήτηση υπηρεσίας");
-        
-        JButton searchButton = new JButton();
-        searchButton.setPreferredSize(new Dimension(40, 40));
-        searchButton.setBackground(Color.LIGHT_GRAY);
-        searchButton.setBorderPainted(false);
-        
-        searchBarPanel.add(searchButton, BorderLayout.WEST);
-        searchBarPanel.add(searchField, BorderLayout.CENTER);
-        headerPanel.add(searchBarPanel, BorderLayout.EAST);
-        
         homePanel.add(headerPanel, BorderLayout.NORTH);
         
         // Main content
@@ -322,6 +315,12 @@ public class CustomerFrame extends JFrame {
         mainContentPanel.add(calendarPanel, BorderLayout.CENTER);
         
         homePanel.add(mainContentPanel, BorderLayout.CENTER);
+    }
+
+    public void refreshPoints() {
+        if (pointsPanel != null) {
+            pointsPanel.reload();
+        }
     }
     
 

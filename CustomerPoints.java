@@ -1,4 +1,3 @@
-
 import javax.swing.*;
 import java.awt.*;
 import java.sql.*;
@@ -21,7 +20,7 @@ public class CustomerPoints extends JPanel {
     }
 
     // Ανάκτηση των πόντων από τη βάση δεδομένων
-    private void loadCustomerPoints() {
+    public void loadCustomerPoints() {
         String sql = "SELECT customer_bonuspoints FROM customers WHERE customer_id = ?";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setInt(1, customerId);
@@ -85,5 +84,10 @@ public void TopLeftLabelPanel(String text) {
         String label = " Οι Πόντοι Μου: " + points + " / " + MAX_POINTS;
         int strWidth = g.getFontMetrics().stringWidth(label);
         g.drawString(label, (panelWidth - strWidth) / 2, barY - 10);
+    }
+
+    public void reload() {
+        loadCustomerPoints();
+        repaint();
     }
 }
