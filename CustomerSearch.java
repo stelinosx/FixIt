@@ -217,7 +217,13 @@ public class CustomerSearch extends JPanel {
 
             
            
+              bookButton.addActionListener(e -> {
+                // Δημιουργία του διαλόγου με τις σωστές παραμέτρους
+                ShowBookingDialog dialog = new ShowBookingDialog(parentFrame, connection, customerId, prof.getProfessionalId());
     
+                // Καλείς το setVisible(true) για να εμφανίσεις τον διάλογο
+                dialog.setVisible(true);
+                });
 
 
 

@@ -36,7 +36,7 @@ public class CustomerFrame extends JFrame {
     private void initConnection() {
         try {
             connection = DriverManager.getConnection(
-                "jdbc:mysql://localhost:3306/fixitdb", "root", "NikolasMicro21!"
+                "jdbc:mysql://localhost:3306/FixIt", "root", "2004Stelios2004"
             );
             System.out.println("Database connected");
         } catch (SQLException e) {
@@ -143,9 +143,6 @@ public class CustomerFrame extends JFrame {
         // Other panels as separate classes
         contentPanel.add(new CustomerSearch(connection, this, customerId), "search");
         contentPanel.add(new CustomerAppointment(connection, this, customerId), "appointments");
-        contentPanel.add(new CustomerReview(connection, customerId), "reviews");
-        contentPanel.add(new CustomerProfile(connection, this, customerId), "profile");
-        contentPanel.add(new CustomerSupport(connection, this, customerId), "support");
         pointsPanel = new CustomerPoints(connection, this, customerId);
         contentPanel.add(pointsPanel, "points");
         
