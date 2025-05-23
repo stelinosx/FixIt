@@ -42,7 +42,7 @@ public class ProfessionalFrame extends JFrame {
         
         createHomePanel();
         appointmentsPanel = new JPanel(); // Προσωρινή λύση
-        supportPanel = new JPanel();      // Προσωρινή λύση
+        supportPanel = new SupportPanelPro();      // Προσωρινή λύση
         profilePanel = new ProfessionalProfile(connection, professionalId).createProfilePanel();
 
         contentPanel.add(homePanel, "home");
@@ -63,7 +63,7 @@ public class ProfessionalFrame extends JFrame {
         sidebarPanel.setLayout(new BoxLayout(sidebarPanel, BoxLayout.Y_AXIS));
         sidebarPanel.setBorder(BorderFactory.createMatteBorder(0, 0, 0, 1, Color.LIGHT_GRAY));
 
-        ImageIcon logoIcon = new ImageIcon("src\\images\\FixIt.png");
+        ImageIcon logoIcon = new ImageIcon("images\\FixIt.png");
 
 // Μπορείς να κάνεις resize αν είναι μεγάλη:
         Image scaledImage = logoIcon.getImage().getScaledInstance(290, 80, Image.SCALE_SMOOTH);

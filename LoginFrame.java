@@ -1,7 +1,7 @@
-import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.sql.*;
+import javax.swing.*;
 
 
 public class LoginFrame extends JFrame {
@@ -39,9 +39,9 @@ public class LoginFrame extends JFrame {
             Class.forName("com.mysql.cj.jdbc.Driver");
             System.out.println("MySQL JDBC driver loaded successfully");
             
-            String url = "jdbc:mysql://localhost:3306/fixit";
+            String url = "jdbc:mysql://localhost:3306/FixIt";
             String username = "root";
-            String password = "thanost04";
+            String password = "2004Stelios2004";
             
             connection = DriverManager.getConnection(url, username, password);
             System.out.println("Database connection established successfully");
@@ -82,7 +82,7 @@ public class LoginFrame extends JFrame {
         };
         headerPanel.setPreferredSize(new Dimension(500, 200));
 
-        ImageIcon logoIcon = new ImageIcon("src\\images\\FixIt.png");
+        ImageIcon logoIcon = new ImageIcon("images\\FixIt.png");
 
         Image scaledImage = logoIcon.getImage().getScaledInstance(280, 80, Image.SCALE_SMOOTH);
         ImageIcon resizedIcon = new ImageIcon(scaledImage);

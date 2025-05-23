@@ -43,7 +43,7 @@ public class CustomerFrame extends JFrame {
         searchPanel = new CustomerSearch(connection, this, customerId);
         profilePanel = new CustomerProfile(connection, customerId).createProfilePanel();
         reviewsPanel = new JPanel();
-        bonuspointsPanel = new JPanel();
+        bonuspointsPanel = new CustomerPoints(connection, this, customerId);
         supportPanel = new SupportPanelCus();
 
         contentPanel.add(homePanel, "home");
@@ -68,7 +68,7 @@ public class CustomerFrame extends JFrame {
         sidebarPanel.setBorder(BorderFactory.createMatteBorder(0, 0, 0, 1, Color.LIGHT_GRAY));
 
         // Προσθήκη λογότυπου
-        ImageIcon logoIcon = new ImageIcon("src/images/FixIt.png");
+        ImageIcon logoIcon = new ImageIcon("images/FixIt.png");
         Image scaledImage = logoIcon.getImage().getScaledInstance(290, 80, Image.SCALE_SMOOTH);
         ImageIcon resizedIcon = new ImageIcon(scaledImage);
         JLabel logoLabel = new JLabel(resizedIcon);
