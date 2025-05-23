@@ -1,4 +1,3 @@
-// Στην αρχή του αρχείου:
 import java.awt.*;
 import java.awt.event.*;
 import java.sql.*;
@@ -6,7 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import javax.swing.*;
-
+import javax.swing.border.EmptyBorder;
 
 public class CustomerSearch extends JPanel {
     private JTextField searchField;
@@ -18,10 +17,12 @@ public class CustomerSearch extends JPanel {
     private int customerId;
 
     private static final Color ORANGE_PRIMARY = new Color(255, 140, 0);
-    private static final Color BACKGROUND = new Color(255, 250, 240);
+    private static final Color BACKGROUND = new Color(250, 245, 240);
+    private static final Color CARD_COLOR = new Color(255, 255, 255);
+    private static final Font DEFAULT_FONT = new Font("SansSerif", Font.PLAIN, 14);
 
     private static final Map<String, String> greekToEnglishSpecialties = new HashMap<>();
-    static { 
+    static {
         greekToEnglishSpecialties.put("Ηλεκτρολόγοι", "electrician");
         greekToEnglishSpecialties.put("Υδραυλικοί", "plumber");
         greekToEnglishSpecialties.put("Καθαριστές", "house cleaner");
@@ -53,21 +54,26 @@ public class CustomerSearch extends JPanel {
         englishToGreekSpecialties.put("Plaster Craftsman", "Γυψαδόρος");
     }
 
-    public CustomerSearch(Connection connection, JFrame parentFrame, int customerId) { // <-- Fixed comma here
-    this.connection = connection;
-    this.parentFrame = parentFrame;
-    this.customerId = customerId;  // Now the customerId is passed into the class
-    
-     setLayout(new BorderLayout());
-     setBackground(BACKGROUND);
+    public CustomerSearch(Connection connection, JFrame parentFrame, int customerId) {
+        this.connection = connection;
+        this.parentFrame = parentFrame;
+        this.customerId = customerId;
 
-        JPanel topPanel = new JPanel(new BorderLayout());
+        setLayout(new BorderLayout(20, 20));
+        setBackground(BACKGROUND);
+        setBorder(new EmptyBorder(20, 20, 20, 20));
+
+        JPanel topPanel = new JPanel(new BorderLayout(10, 10));
         topPanel.setBackground(BACKGROUND);
 
         searchField = new JTextField("Πληκτρολόγησε ειδικότητα ή όνομα...");
         searchField.setForeground(Color.GRAY);
-        searchField.setFont(new Font("SansSerif", Font.PLAIN, 14));
-        searchField.setBorder(BorderFactory.createLineBorder(ORANGE_PRIMARY, 2));
+        searchField.setFont(DEFAULT_FONT);
+        searchField.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(ORANGE_PRIMARY, 2),
+            new EmptyBorder(8, 10, 8, 10)
+        ));
+
         searchField.addFocusListener(new FocusAdapter() {
             public void focusGained(FocusEvent e) {
                 if (searchField.getText().equals("Πληκτρολόγησε ειδικότητα ή όνομα...")) {
@@ -78,31 +84,26 @@ public class CustomerSearch extends JPanel {
         });
 
         searchButton = new JButton("Αναζήτηση");
-        searchButton.setBackground(ORANGE_PRIMARY);
-        searchButton.setForeground(Color.WHITE);
-        searchButton.setFont(new Font("SansSerif", Font.BOLD, 14));
+        styleButton(searchButton);
+
         searchButton.addActionListener(e -> showResults());
 
         topPanel.add(searchField, BorderLayout.CENTER);
         topPanel.add(searchButton, BorderLayout.EAST);
         add(topPanel, BorderLayout.NORTH);
 
-        specialtyButtonsPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        specialtyButtonsPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 10));
         specialtyButtonsPanel.setBackground(BACKGROUND);
 
-        String[] specialties = {
-            "Ηλεκτρολόγοι", "Υδραυλικοί", "Καθαριστές", "Ψυκτικοί", "Ξυλουργοί", 
-            "Ελαιοχρωματιστές", "Τεχνικοί PC", "Θερμοϋδραυλικοί", "Σιδεράδες", 
-            "Καθαριστές Χαλιών", "Τεχνικοί Αποφράξεων", "Ειδικοί Απεντομώσεων", "Γυψαδόροι"
-        };
+        String[] specialties = greekToEnglishSpecialties.keySet().toArray(new String[0]);
 
         for (String spec : specialties) {
             JButton btn = new JButton(spec);
+            btn.setFont(DEFAULT_FONT);
             btn.setBackground(Color.WHITE);
-            btn.setFont(new Font("SansSerif", Font.PLAIN, 14));
-            btn.setPreferredSize(new Dimension(150, 40));
-            btn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
             btn.setBorder(BorderFactory.createLineBorder(ORANGE_PRIMARY, 2));
+            btn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+            btn.setPreferredSize(new Dimension(140, 36));
             btn.addActionListener(e -> {
                 searchField.setText(spec);
                 searchField.setForeground(Color.BLACK);
@@ -115,18 +116,27 @@ public class CustomerSearch extends JPanel {
 
         resultsPanel = new JPanel();
         resultsPanel.setLayout(new BoxLayout(resultsPanel, BoxLayout.Y_AXIS));
+        resultsPanel.setBackground(BACKGROUND);
+
         JScrollPane scrollPane = new JScrollPane(resultsPanel);
-        scrollPane.setPreferredSize(new Dimension(800, 400));
+        scrollPane.setBorder(null);
         add(scrollPane, BorderLayout.SOUTH);
+    }
+
+    private void styleButton(JButton button) {
+        button.setBackground(ORANGE_PRIMARY);
+        button.setForeground(Color.black);
+        button.setFocusPainted(false);
+        button.setFont(new Font("SansSerif", Font.BOLD, 14));
+        button.setBorder(BorderFactory.createEmptyBorder(8, 16, 8, 16));
+        button.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
     }
 
     private void showResults() {
         String searchText = typeOrChooseSpecialty();
-
         if (!validateSearch(searchText)) return;
 
         ArrayList<Professional> professionals = searchProfessionals(searchText);
-
         resultsPanel.removeAll();
 
         if (professionals.isEmpty()) {
@@ -158,11 +168,11 @@ public class CustomerSearch extends JPanel {
     private ArrayList<Professional> searchProfessionals(String searchText) {
         ArrayList<Professional> list = new ArrayList<>();
 
-       String query = "SELECT p.professional_id, u.user_email, p.professional_phone, p.professional_FirstName, " +
-               "p.professional_LastName, p.professional_speciality, p.professional_bio " +
-               "FROM professionals p " +
-               "JOIN users u ON p.user_id = u.user_id " +
-               "WHERE LOWER(p.professional_speciality) LIKE ? OR LOWER(p.professional_FirstName) LIKE ? OR LOWER(p.professional_LastName) LIKE ?";
+        String query = "SELECT p.professional_id, u.user_email, p.professional_phone, p.professional_FirstName, " +
+                       "p.professional_LastName, p.professional_speciality, p.professional_bio " +
+                       "FROM professionals p " +
+                       "JOIN users u ON p.user_id = u.user_id " +
+                       "WHERE LOWER(p.professional_speciality) LIKE ? OR LOWER(p.professional_FirstName) LIKE ? OR LOWER(p.professional_LastName) LIKE ?";
 
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
             String likeText = "%" + searchText + "%";
@@ -174,14 +184,14 @@ public class CustomerSearch extends JPanel {
 
             while (rs.next()) {
                 Professional prof = new Professional(
-                rs.getInt("professional_id"),
-                "", "", rs.getString("user_email"),
-                rs.getString("professional_phone"),
-                rs.getString("professional_FirstName"),
-                rs.getString("professional_LastName"),
-                rs.getString("professional_speciality"),
-                rs.getString("professional_bio")
-);
+                    rs.getInt("professional_id"),
+                    "", "", rs.getString("user_email"),
+                    rs.getString("professional_phone"),
+                    rs.getString("professional_FirstName"),
+                    rs.getString("professional_LastName"),
+                    rs.getString("professional_speciality"),
+                    rs.getString("professional_bio")
+                );
 
                 list.add(prof);
             }
@@ -196,9 +206,12 @@ public class CustomerSearch extends JPanel {
         for (Professional prof : professionals) {
             JPanel profCard = new JPanel();
             profCard.setLayout(new BoxLayout(profCard, BoxLayout.Y_AXIS));
-            profCard.setBorder(BorderFactory.createLineBorder(Color.GRAY));
-            profCard.setBackground(Color.WHITE);
-            profCard.setMaximumSize(new Dimension(600, 160));
+            profCard.setBackground(CARD_COLOR);
+            profCard.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(220, 220, 220)),
+                new EmptyBorder(15, 15, 15, 15)
+            ));
+            profCard.setMaximumSize(new Dimension(650, 170));
             profCard.setAlignmentX(Component.CENTER_ALIGNMENT);
 
             String professionInGreek = englishToGreekSpecialties.getOrDefault(prof.getProfession(), prof.getProfession());
@@ -210,27 +223,17 @@ public class CustomerSearch extends JPanel {
             profCard.add(new JLabel("📄 Βιογραφικό: " + prof.getDescription()));
 
             JButton bookButton = new JButton("Ραντεβού");
+            styleButton(bookButton);
             bookButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-            bookButton.setBackground(ORANGE_PRIMARY);
-            bookButton.setForeground(Color.WHITE);
-            bookButton.setFont(new Font("SansSerif", Font.BOLD, 13));
-
-            
-           
-              bookButton.addActionListener(e -> {
-                // Δημιουργία του διαλόγου με τις σωστές παραμέτρους
+            bookButton.addActionListener(e -> {
                 ShowBookingDialog dialog = new ShowBookingDialog(parentFrame, connection, customerId, prof.getProfessionalId());
-    
-                // Καλείς το setVisible(true) για να εμφανίσεις τον διάλογο
                 dialog.setVisible(true);
-                });
-
-
+            });
 
             profCard.add(Box.createVerticalStrut(10));
             profCard.add(bookButton);
 
-            resultsPanel.add(Box.createVerticalStrut(10));
+            resultsPanel.add(Box.createVerticalStrut(15));
             resultsPanel.add(profCard);
         }
     }
@@ -243,3 +246,5 @@ public class CustomerSearch extends JPanel {
         resultsPanel.add(noResults);
     }
 }
+
+
