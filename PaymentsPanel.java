@@ -100,7 +100,7 @@ public class PaymentsPanel extends JPanel {
         JButton payBtn    = new JButton("Πληρωμή");
         JButton cancelBtn = new JButton("Ακύρωση");
         payBtn.addActionListener(e -> onPay());
-        cancelBtn.addActionListener(e -> parent.showHome());
+        cancelBtn.addActionListener(e -> parent.show());
         bottom.add(cancelBtn);
         bottom.add(payBtn);
         add(bottom, BorderLayout.SOUTH);
@@ -191,7 +191,7 @@ public class PaymentsPanel extends JPanel {
         if (res.success) {
             JOptionPane.showMessageDialog(this, res.message, "Επιτυχία", JOptionPane.INFORMATION_MESSAGE);
             parent.refreshPoints();   // φρεσκάρισμα των πόντων
-            parent.showHome();
+            parent.show();
         } else {
             JOptionPane.showMessageDialog(this, res.message, "Σφάλμα", JOptionPane.ERROR_MESSAGE);
         }

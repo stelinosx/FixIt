@@ -1,7 +1,7 @@
+import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.sql.*;
-import javax.swing.*;
 
 
 public class LoginFrame extends JFrame {
@@ -39,9 +39,9 @@ public class LoginFrame extends JFrame {
             Class.forName("com.mysql.cj.jdbc.Driver");
             System.out.println("MySQL JDBC driver loaded successfully");
             
-            String url = "jdbc:mysql://localhost:3306/FixIt";
+            String url = "jdbc:mysql://localhost:3306/fixit";
             String username = "root";
-            String password = "2004Stelios2004";
+            String password = "thanost04";
             
             connection = DriverManager.getConnection(url, username, password);
             System.out.println("Database connection established successfully");
@@ -279,79 +279,79 @@ public class LoginFrame extends JFrame {
     }
 
     private void handleLogin() {
-        String username = loginUsernameField.getText().trim();
-        String password = new String(loginPasswordField.getPassword()).trim();
-    
-        if (username.isEmpty() || password.isEmpty()) {
-            loginErrorLabel.setText("Please fill in all fields");
-            return;
-        }
-    
-        loginErrorLabel.setText("");
-    
-        try {
-            String query = "SELECT user_id, user_type FROM users WHERE user_username = ? AND user_password = ?";
-            PreparedStatement stmt = connection.prepareStatement(query);
-            stmt.setString(1, username);
-            stmt.setString(2, password);
-            ResultSet rs = stmt.executeQuery();
-    
-            if (rs.next()) {
-                int userId = rs.getInt("user_id");
-                String userType = rs.getString("user_type");
-                
-                System.out.println("Login successful: user_id = " + userId + ", user_type = " + userType);
-    
-                CustomDialog dialog = new CustomDialog(this, "Login successful!");
-                dialog.setVisible(true);
-                this.dispose();
-    
-                if (userType.equals("customer")) {
-                    query = "SELECT customer_id FROM customers WHERE user_id = ?";
-                    stmt = connection.prepareStatement(query);
-                    stmt.setInt(1, userId);
-                    rs = stmt.executeQuery();
-    
-                    if (rs.next()) {
-                        int customerId = rs.getInt("customer_id");
-                        System.out.println("Customer found: customer_id = " + customerId);
-                        SwingUtilities.invokeLater(() -> {
-                            new CustomerFrame(customerId).setVisible(true);
-                        });
-                    } else {
-                        System.out.println("Customer record not found for user_id: " + userId);
-                        JOptionPane.showMessageDialog(this, "Customer record not found", "Error", JOptionPane.ERROR_MESSAGE);
-                        new LoginFrame().setVisible(true);
-                    }
-                } else if (userType.equals("professional")) {
-                    query = "SELECT professional_id FROM professionals WHERE user_id = ?";
-                    stmt = connection.prepareStatement(query);
-                    stmt.setInt(1, userId);
-                    rs = stmt.executeQuery();
-    
-                    if (rs.next()) {
-                        int professionalId = rs.getInt("professional_id");
-                        System.out.println("Professional found: professional_id = " + professionalId);
-                        SwingUtilities.invokeLater(() -> {
-                             new ProfessionalFrame(professionalId, connection).setVisible(true);
-                        });
-                    } else {
-                        System.out.println("Professional record not found for user_id: " + userId);
-                        JOptionPane.showMessageDialog(this, "Professional record not found", "Error", JOptionPane.ERROR_MESSAGE);
-                        new LoginFrame().setVisible(true);
-                    }
-                }
-            } else {
-                System.out.println("Login failed: wrong username or password");
-                loginErrorLabel.setText("Wrong username or password");
-            }
-    
-        } catch (SQLException e) {
-            e.printStackTrace();
-            loginErrorLabel.setText("Database error: " + e.getMessage());
-        }
+    String username = loginUsernameField.getText().trim();
+    String password = new String(loginPasswordField.getPassword()).trim();
+
+    if (username.isEmpty() || password.isEmpty()) {
+        loginErrorLabel.setText("Please fill in all fields");
+        return;
     }
+
+    loginErrorLabel.setText("");
+
+    try {
+        String query = "SELECT user_id, user_type FROM users WHERE user_username = ? AND user_password = ?";
+        PreparedStatement stmt = connection.prepareStatement(query);
+        stmt.setString(1, username);
+        stmt.setString(2, password);
+        ResultSet rs = stmt.executeQuery();
+
+        if (rs.next()) {
+            int userId = rs.getInt("user_id");
+            String userType = rs.getString("user_type");
+
+            System.out.println("Login successful: user_id = " + userId + ", user_type = " + userType);
+            CustomDialog dialog = new CustomDialog(this, "Login successful!");
+            dialog.setVisible(true);
+
+            if (userType.equals("customer")) {
+                query = "SELECT customer_id FROM customers WHERE user_id = ?";
+                stmt = connection.prepareStatement(query);
+                stmt.setInt(1, userId);
+                rs = stmt.executeQuery();
     
+                if (rs.next()) {
+                    int customerId = rs.getInt("customer_id");
+                    System.out.println("Customer found: customer_id = " + customerId);
+                    SwingUtilities.invokeLater(() -> new CustomerFrame(customerId, connection).setVisible(true));
+                    this.dispose();
+                } else {
+                    System.out.println("Customer record not found for user_id: " + userId);
+                    JOptionPane.showMessageDialog(this, "Customer record not found", "Error", JOptionPane.ERROR_MESSAGE);
+                    new LoginFrame().setVisible(true);
+                    this.dispose();
+                }
+
+            } else if (userType.equals("professional")) {
+                query = "SELECT professional_id FROM professionals WHERE user_id = ?";
+                stmt = connection.prepareStatement(query);
+                stmt.setInt(1, userId);
+                rs = stmt.executeQuery();
+
+                if (rs.next()) {
+                    int professionalId = rs.getInt("professional_id");
+                    System.out.println("Professional found: professional_id = " + professionalId);
+                    SwingUtilities.invokeLater(() -> new ProfessionalFrame(professionalId, connection).setVisible(true));
+                    this.dispose();
+                } else {
+                    System.out.println("Professional record not found for user_id: " + userId);
+                    JOptionPane.showMessageDialog(this, "Professional record not found", "Error", JOptionPane.ERROR_MESSAGE);
+                    new LoginFrame().setVisible(true);
+                    this.dispose();
+                }
+            }
+
+        } else {
+            System.out.println("Login failed: wrong username or password");
+            loginErrorLabel.setText("Wrong username or password");
+        }
+
+    } catch (SQLException e) {
+        e.printStackTrace();
+        loginErrorLabel.setText("Database error: " + e.getMessage());
+    }
+}
+
     private void handleRegistration() {
         String username = regUsernameField.getText().trim();
         String password = new String(regPasswordField.getPassword()).trim();
@@ -482,4 +482,4 @@ public class LoginFrame extends JFrame {
             frame.setVisible(true);
         });
     }
-} 
+}
