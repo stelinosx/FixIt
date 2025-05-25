@@ -38,12 +38,10 @@ public class ProfessionalFrame extends JFrame {
 
         // Panels
         createHomePanel();
+        appointmentsPanel = new ProfessionalAppointments(professionalId, connection);
         profilePanel = new ProfessionalProfile(connection, professionalId).createProfilePanel();
-        
-        createHomePanel();
-        appointmentsPanel = new JPanel(); // Προσωρινή λύση
-        supportPanel = new SupportPanelPro();      // Προσωρινή λύση
-        profilePanel = new ProfessionalProfile(connection, professionalId).createProfilePanel();
+        supportPanel = new SupportPanelPro();    
+    
 
         contentPanel.add(homePanel, "home");
         contentPanel.add(appointmentsPanel, "appointments");

@@ -272,6 +272,10 @@ public class CustomerFrame extends JFrame {
         dialog.setVisible(true);
     }
 
+    public void showHome() {
+        cardLayout.show(contentPanel, "home");
+    }
+
     private void logoutConfirmed() {
         try {
             if (connection != null && !connection.isClosed()) {
@@ -289,7 +293,22 @@ public class CustomerFrame extends JFrame {
     }
 
     public void refreshPoints() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'refreshPoints'");
+    if (bonuspointsPanel instanceof CustomerPoints) {
+        ((CustomerPoints) bonuspointsPanel).reload();
     }
+    cardLayout.show(contentPanel, "points");
+    }
+    public JPanel getContentPanel() {
+        return contentPanel;
+    }
+
+    public void switchTo(String command) {
+        cardLayout.show(contentPanel, command);
+    }
+
+    public void refreshAppointments() {
+    if (appointmentsPanel instanceof CustomerAppointment) {
+        ((CustomerAppointment) appointmentsPanel).loadAppointments();
+    }
+}
 }

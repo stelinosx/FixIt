@@ -227,7 +227,6 @@ public class CustomerSearch extends JPanel {
             bookButton.setAlignmentX(Component.CENTER_ALIGNMENT);
             bookButton.addActionListener(e -> {
                 ShowBookingDialog dialog = new ShowBookingDialog(parentFrame, connection, customerId, prof.getProfessionalId());
-                dialog.setVisible(true);
             });
 
             profCard.add(Box.createVerticalStrut(10));
