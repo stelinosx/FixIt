@@ -15,6 +15,7 @@ public class ProfessionalFrame extends JFrame {
     private JPanel supportPanel;
     private Connection connection;
     private JButton activeButton = null;
+    private JPanel ProfCustomerHistoryPanel;
 
     // Custom colors
     private static final Color ORANGE_PRIMARY = new Color(255, 140, 0);
@@ -40,12 +41,14 @@ public class ProfessionalFrame extends JFrame {
         createHomePanel();
         appointmentsPanel = new ProfessionalAppointments(professionalId, connection);
         profilePanel = new ProfessionalProfile(connection, professionalId).createProfilePanel();
+                ProfCustomerHistoryPanel = new ProfCustomerHistory(connection, professionalId).createProfCustomerPanel();
         supportPanel = new SupportPanelPro();    
     
 
         contentPanel.add(homePanel, "home");
         contentPanel.add(appointmentsPanel, "appointments");
         contentPanel.add(profilePanel, "profile");
+        contentPanel.add(ProfCustomerHistoryPanel, "CustHistory");
         contentPanel.add(supportPanel, "support");
 
         cardLayout.show(contentPanel, "home");
@@ -77,8 +80,8 @@ public class ProfessionalFrame extends JFrame {
         sidebarPanel.add(Box.createRigidArea(new Dimension(0, 20)));
         
 
-        String[] navItems = {"🏠 Αρχική", "📅 Ραντεβού", "👤 Το προφίλ μου"};
-        String[] navCommands = {"home", "appointments", "profile"};
+        String[] navItems = {"🏠 Αρχική", "📅 Ραντεβού","📅Ιστορικό Πελατών ", "👤 Το προφίλ μου"};
+        String[] navCommands = {"home", "appointments","CustHistory" ,  "profile"};
         
         for (int i = 0; i < navItems.length; i++) {
             JButton navButton = createNavButton(navItems[i], navCommands[i]);
