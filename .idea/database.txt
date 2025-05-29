@@ -1,15 +1,14 @@
 Η αρχική προσέγγιση της βάσης δεδομένων που θα χρησιμοποιηθεί για την εφαρμογή μας:
 
-drop database if exists fixitdb;
-create database fixitdb;
-use fixitdb;
+drop database if exists FixIt;
+create database FixIt;
+use FixIt;
 
 create table users(
 user_id int(11) not null auto_increment,
 user_username varchar(255) unique not null,
 user_password varchar(255) not null,
 user_email varchar(255) unique not null,
-user_phone varchar(255) unique not null,
 user_type enum("customer","professional"),
 primary key(user_id)
 );
@@ -31,7 +30,7 @@ create table professionals(
 professional_id int(11) not null auto_increment,
 professional_FirstName varchar(255) not null,
 professional_LastName varchar(255) not null,
-professional_speciality enum("electrician","plumber","house cleaner"),
+professional_speciality enum('electrician','plumber','house cleaner','refrigerant','painter','pc technician','thermohydraulic','smith','Plaster Craftsman','Carpet Cleaner','drain technician','pest controller') default null,
 professional_phone int(11) unique not null,
 professional_bio text not null,
 user_id int(11) not null,
@@ -75,6 +74,7 @@ comments text,
 customer_id int(11) not null,
 professional_id int(11) not null,
 appointment_id int(11) not null,
+review_date timestamp default current_timestamp,
 primary key(review_id),
 foreign key(customer_id) references customers(customer_id)
 on delete cascade on update cascade,

@@ -39,9 +39,10 @@ public class LoginFrame extends JFrame {
             Class.forName("com.mysql.cj.jdbc.Driver");
             System.out.println("MySQL JDBC driver loaded successfully");
             
-            String url = "jdbc:mysql://localhost:3306/FixItDB";
+            String url = "jdbc:mysql://localhost:3306/FixIt";
             String username = "root";
-            String password = "NikolasMicro21!";
+            // Χρησιμοποιήστε το κατάλληλο password για τη βάση δεδομένων σας
+            String password = "2004Stelios2004";
             
             connection = DriverManager.getConnection(url, username, password);
             System.out.println("Database connection established successfully");
