@@ -125,3 +125,22 @@ on delete cascade on update cascade,
 foreign key(appointment_id) references appointment(appointment_id)
 on delete cascade on update cascade
 );
+
+
+-- Εισαγωγή ενός πελάτη
+INSERT INTO users (user_username, user_password, user_email, user_type)
+VALUES ('testcustomer', 'testcustomer', 'customer@example.com', 'customer');
+
+-- Εισαγωγή ενός επαγγελματία
+INSERT INTO users (user_username, user_password, user_email, user_type)
+VALUES ('testprofessional', 'testprofessional', 'professional@example.com', 'professional');
+
+INSERT INTO customers (customer_FirstName, customer_LastName, address, customer_phone, customer_bonuspoints, user_id)
+VALUES ('John', 'Doe', '123 Test Street', 2101234567, 50, 1);
+
+INSERT INTO professionals (professional_FirstName, professional_LastName, professional_speciality,
+    professional_phone, professional_bio, user_id) 
+    VALUES (
+    'Jane', 'Smith', 'electrician',
+    2107654321, 'Experienced electrician for home and office services.', 2
+);
